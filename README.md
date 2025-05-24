@@ -2,6 +2,8 @@
 
 This is an attempt to build and visualize a [Yahboom](https://github.com/YahboomTechnology/ROSMASTERX3) mobile robot with URDF in ROS2 Humble following [Automatic Addison's Tutorial](https://automaticaddison.com/create-and-visualize-a-mobile-robot-with-urdf-ros-2-jazzy/).
 
+Next step is running simualtion in Gazebo.
+
 What I learnt:
 
 1. Mesh files - makes your robot look realistic in simulation. Typically in formats such as STL. One which is used in 3D printing and designed using CAD programs.
@@ -16,3 +18,5 @@ What I learnt:
 <div align=center>
 <img src="./yahboom_rosmaster_description/robot_img.png" alt="Yahboom RosMaster Mobile Robot" width="480">
 </div>
+
+5. Next I added ros2 control packages, but the example doesn't seem to work. Need to look into it. 
