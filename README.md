@@ -2,7 +2,6 @@
 
 This is an attempt to build and visualize a [Yahboom](https://github.com/YahboomTechnology/ROSMASTERX3) mobile robot with URDF in ROS2 Humble following [Automatic Addison's Tutorial](https://automaticaddison.com/create-and-visualize-a-mobile-robot-with-urdf-ros-2-jazzy/).
 
-Next step is running simualtion in Gazebo.
 
 What I learnt:
 
@@ -19,4 +18,11 @@ What I learnt:
 <img src="./yahboom_rosmaster_description/robot_img.png" alt="Yahboom RosMaster Mobile Robot" width="480">
 </div>
 
-5. Next I added ros2 control packages, but the example doesn't seem to work. Need to look into it. 
+Next step is running simualtion in Gazebo:
+
+1. First I added ros2 control packages and required dependencies, but the example didn't work following the tutorial instruction. Issue is that the topic is actually different (unstamped version). So the correct way to execute is -
+`ros2 launch gz_ros2_control_demos diff_drive_example.launch.py`
+
+and
+
+`ros2 topic pub /diff_drive_base_controller/cmd_vel_unstamped geometry_msgs/msg/Twist "{linear: {x: 1.0, y: 0.0, z: 0.0}, angular: {x: 0.0, y: 0.0, z: 0.5}}" --rate 5`
