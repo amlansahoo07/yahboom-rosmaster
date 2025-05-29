@@ -33,4 +33,28 @@ Added model files for the worlds.
 
 Also, there might be potential problems with using gz-gazebo... plugins. Need to keep in mind.
 
-3. Proceeded to create a mecanum drive controller. Defined header and source files. After adding all relevant files, tried to build it but ran into error. Need to investigate.
+3. Proceeded to create a mecanum drive controller. Defined header and source files. There was a problem because of ROS2 Humble API compatibility issues since the actual code was written for a later version. Following are the changes which were needed.
+
+a. RealtimeBox API Changes - error: cannot convert 'lambda' to 'const std::shared_ptr<geometry_msgs::msg::TwistStamped_<std::allocator<void> > >&'
+
+While newer ROS2 version allows lambda function, humble expects direct value assignment:
+`received_velocity_msg_ptr_.set(msg);`
+
+b. Hardware Interface return type changes - error: could not convert 'void' to 'bool'
+612 |       if (!wheel_handle.velocity->get().set_value(0.0)) 
+
+The older humble version returns void and doesn't check for errors while newer jazzy one returns bool indicating success/failure:
+`wheel_handle.velocity->get().set_value(0.0);`
+
+c. State Interface API - 
+
+// New Jazzy: get_optional() for safe access
+wheel_handles_[FRONT_LEFT].feedback->get().get_optional().value_or(0.0)
+
+// Old (Humble): Direct get_value() access
+`wheel_handles_[FRONT_LEFT].feedback->get().get_value()`
+
+d. Lifecycle State Access -
+
+Needed to fetch state using node accessor in Humble version:
+`get_node()->get_current_state().id()`
