@@ -1,9 +1,9 @@
-# yahboom_rosmaster #
+# yahboom_rosmaster 
 
 This is an attempt to build and visualize a [Yahboom](https://github.com/YahboomTechnology/ROSMASTERX3) mobile robot with URDF in ROS2 Humble following [Automatic Addison's Tutorial](https://automaticaddison.com/create-and-visualize-a-mobile-robot-with-urdf-ros-2-jazzy/).
 
 
-What I learnt:
+## What I learnt first:
 
 1. Mesh files - makes your robot look realistic in simulation. Typically in formats such as STL. One which is used in 3D printing and designed using CAD programs.
 
@@ -18,7 +18,9 @@ What I learnt:
 <img src="./yahboom_rosmaster_description/robot_img.png" alt="Yahboom RosMaster Mobile Robot" width="480">
 </div>
 
-Next step is running simulation in Gazebo:
+## Next step is running simulation in Gazebo:
+
+### Define control packages and mecanum wheel controller
 
 1. First I added ros2 control packages and required dependencies, but the example didn't work following the tutorial instruction. Issue is that the topic is actually different (unstamped version). So the correct way to execute is -
 `ros2 launch gz_ros2_control_demos diff_drive_example.launch.py`
@@ -58,3 +60,32 @@ d. Lifecycle State Access -
 
 Needed to fetch state using node accessor in Humble version:
 `get_node()->get_current_state().id()`
+
+### conneting Gazebo to ROS2 control
+
+1. Defined controller manager which can manage multiple controllers. Along with it added multiple launch and config files as needed.
+
+2. To launch Gazebo (alias x3 in tutorial):
+`bash ~/projects/project_ws/src/yahboom_rosmaster/yahboom_rosmaster_bringup/scripts/rosmaster_x3_gazebo.sh`
+
+or simply:
+`bash src/yahboom_rosmaster/yahboom_rosmaster_bringup/scripts/rosmaster_x3_gazebo.sh` from inside workspace
+
+After waiting for sometime, the environment and everything does pop up. But I think there's still a lot of configuration issues because of ros2 humble incompatiblity. Need to take a look at it later. For e.g.
+[ruby $(which ign) gazebo-3] [Err] [SystemPaths.cc:482] File [/home/ubuntu/ros2_ws/install/yahboom_rosmaster_gazebo/share/yahboom_rosmaster_gazebo/models/cafe_table/materials/textures/Maple.jpg] resolved to path [/home/ubuntu/ros2_ws/install/yahboom_rosmaster_gazebo/share/yahboom_rosmaster_gazebo/models/cafe_table/materials/textures/Maple.jpg] but the path does not exist
+[ruby $(which ign) gazebo-3] [Err] [Material.cc:164] Unable to find texture [/home/ubuntu/ros2_ws/install/yahboom_rosmaster_gazebo/share/yahboom_rosmaster_gazebo/models/cafe_table/materials/textures/Maple.jpg] as a locally cached texture or in path [/home/amlansahoo07/projects/project_ws/install/yahboom_rosmaster_gazebo/share/yahboom_rosmaster_gazebo/models/cafe_table/meshes]
+
+3. To move the robot -
+`ros2 topic pub /mecanum_drive_controller/cmd_vel geometry_msgs/msg/TwistStamped "{header: {stamp: {sec: $(date +%s), nanosec: 0}, frame_id: ''}, twist: {linear: {x: 0.0, y: 0.1, z: 0.0}, angular: {x: 0.0, y: 0.0, z: 0.0}}}"`
+
+4. To check the active controllers -
+`ros2 control list_controllers` and `ros2 control list_controllers -v`
+
+5. Finally implemented a script to run the robot usin:
+`ros2 run yahboom_rosmaster_system_tests square_mecanum_controller`
+
+![alt text](image.png)
+
+<div align=center>
+<img src="./yahboom_rosmaster_system_tests/robot_script.png" alt="Robot Square Path" width="480">
+</div>
